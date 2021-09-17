@@ -1,6 +1,6 @@
 {
-  "name": "dash-type",
-  "productName": "dash-type",
+  "name": "UArizona-FSAE-Dashboard",
+  "productName": "dashboard",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -24,7 +24,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "dash_type"
+            "name": "dashboard"
           }
         },
         {
