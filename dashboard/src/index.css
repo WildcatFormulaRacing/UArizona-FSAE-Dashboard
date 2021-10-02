@@ -1,3 +1,9 @@
+/* 7 seg font */
+@font-face {
+    font-family: 'segment7';
+    src: url(./assets/7segment.woff);
+}
+
 :root {
     --screen-width: 800px;
     --screen-height: 480px;
@@ -10,7 +16,7 @@ body, html {
     max-height: var(--screen-height);
     /* text */
     color: white;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'segment7';
 }
 
 span {
@@ -121,7 +127,6 @@ label {
 
 .center {
     font-size: 9em;
-    font-weight: bolder;
     grid-column: 2;
     grid-row: 1 / 5;
 }

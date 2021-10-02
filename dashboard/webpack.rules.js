@@ -25,5 +25,9 @@ module.exports = [
                 transpileOnly: true
             }
         }
+    },
+    {
+        test: /\.(woff|woff2|tff|eot)$/,
+        use: 'file-loader?name=fonts/[name].[ext]!static'
     }
 ];
