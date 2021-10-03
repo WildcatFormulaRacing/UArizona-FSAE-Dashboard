@@ -1,7 +1,15 @@
 /* 7 seg font */
+
 @font-face {
     font-family: 'segment7';
     src: url(./assets/7segment.woff);
+}
+
+/* stasua font */
+
+@font-face {
+    font-family: 'strasua';
+    src: url(./assets/strasua.woff);
 }
 
 :root {
@@ -129,4 +137,16 @@ label {
     font-size: 9em;
     grid-column: 2;
     grid-row: 1 / 5;
+}
+
+canvas {
+    position: absolute;
+}
+
+#base-canvas {
+    z-index: 1;
+}
+
+#animation-canvas {
+    z-index: 2;
 }
