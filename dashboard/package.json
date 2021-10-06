@@ -57,7 +57,7 @@
                 },
                 {
                     "html": "./src/digital.html",
-                    "js": "./src/renderer.ts",
+                    "js": "./src/digitalRenderer.ts",
                     "name": "digital"
                 }
               ]

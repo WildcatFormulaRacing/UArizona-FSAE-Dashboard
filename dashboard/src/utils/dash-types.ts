@@ -43,3 +43,19 @@ export enum DashColors {
 	YELLOW = "#ecff51",
 	RED = "#fc036f",
 }
+
+//Events
+// car event should be changed to the approiate bitmap once CAN is implemented
+export enum IPCEvents {
+    // for regular CAN events
+    CAR_DATA = "car-data",
+    // for irregular CAN events
+    CAR_ERROR = "car-error",
+    // one time event call for finished DOM load
+    DASH_ON = "dash-on",
+}
+
+
+// Entry Points
+export const MAIN_ENTRY = "http://localhost:3000/main_window";
+export const DIGITAL_ENTRY = "http://localhost:3000/digital";
