@@ -9,7 +9,6 @@ import {
     IPCEvents,
 } from "./utils/dash-types";
 import { ipcRenderer, IpcRendererEvent } from "electron";
-import { getLinePoints } from "./utils/dash-utils";
 
 // SLOTS
 const tlSlot: Slot = {
