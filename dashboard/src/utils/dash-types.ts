@@ -55,7 +55,9 @@ export enum IPCEvents {
     DASH_ON = "dash-on",
 }
 
-
 // Entry Points
 export const MAIN_ENTRY = "http://localhost:3000/main_window";
 export const DIGITAL_ENTRY = "http://localhost:3000/digital";
+
+// errors
+export const PORT_ALREADY_OPEN_ERR = "Port is already open";

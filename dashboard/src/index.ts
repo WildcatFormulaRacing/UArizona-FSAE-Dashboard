@@ -1,5 +1,5 @@
 import { app, BrowserWindow, globalShortcut } from "electron";
-import { CarError, IPCEvents, PortOpenEvent } from "./utils/dash-types";
+import { CarError, IPCEvents, PortOpenEvent, PORT_ALREADY_OPEN_ERR } from "./utils/dash-types";
 import { decodeCAN } from "./utils/dash-utils";
 import { MAIN_ENTRY, DIGITAL_ENTRY } from "./utils/dash-types";
 
@@ -48,28 +48,27 @@ const createWindow = (): void => {
 	// and load the index.html of the app.
 	mainWindow.loadURL(MAIN_ENTRY);
 	// mainWindow.webContents.openDevTools();
-
-    mainWindow.webContents.on('did-finish-load', () => {
-        console.log("Dash on sent")
-        mainWindow.webContents.send(IPCEvents.DASH_ON);
-        connectToCan();
-    });
+	mainWindow.webContents.on("did-finish-load", () => {
+		console.log("Dash on sent");
+		mainWindow.webContents.send(IPCEvents.DASH_ON);
+		connectToCan();
+	});
 };
 
 const connectToCan = () => {
 	port.open((err: PortOpenEvent) => {
 		// if there was no err, port opened successfully
-		if (!err) return;
-
+        // special exception for if it tries to open the port when its already
+        // open, this usually happens during a dash switch, but is dealed with here
+		if (!err || err.message === PORT_ALREADY_OPEN_ERR) return;
+        
 		// close events will be considered a fatal error
 		const carErr: CarError = {
 			status: 500,
 			msg: "CAN BUS DISCONNECTION",
 			fatal: true,
 		};
-		// tell renderer
-        console.log("Car error sent");
-        console.log(carErr);
+
 		mainWindow.webContents.send(IPCEvents.CAR_ERROR, carErr);
 		// start timeout loop to retry connection
 		setTimeout(() => connectToCan(), 2000);
@@ -80,19 +79,21 @@ const connectToCan = () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
-    createWindow();
-    // register dashboard view switch, for now it'll be the 'd' key on the keyboard
-    // @TODO change it to a CAN event when CAN is setup so it can be controlled
-    // from the steering wheel
-    globalShortcut.register('CommandOrControl+D', () => {
-        // switch the dash
-        currentMode = currentMode === MAIN_ENTRY ? DIGITAL_ENTRY : MAIN_ENTRY;
-        // close serialport, it seems to bug out if we dont
-        port.close(() => {
-            console.log("port closed");
-        })
-        mainWindow.loadURL(currentMode);
-    }) 
+	createWindow();
+	// register dashboard view switch, for now it'll be the 'd' key on the keyboard
+	// @TODO change it to a CAN event when CAN is setup so it can be controlled
+	// from the steering wheel.
+	globalShortcut.register("CommandOrControl+D", async () => {
+		// switch the dash
+		currentMode = currentMode === MAIN_ENTRY ? DIGITAL_ENTRY : MAIN_ENTRY;
+		// close serialport, it seems to bug out if we dont. Also we have to wait
+        // until the port is actually closed, port.close() takes callsback when
+        // its closed so that's why we're using async here
+		await port.close();
+		console.log("loading");
+		mainWindow.loadURL(currentMode);
+		port.open();
+	});
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -118,8 +119,6 @@ port.on("open", () => {
 });
 
 port.on("close", () => {
-	console.log("CLOSE");
-	// retry can connection
 	connectToCan();
 });
 
