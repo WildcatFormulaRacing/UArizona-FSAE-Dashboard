@@ -46,6 +46,7 @@ span {
     height: 100%;
     background: white;
     text-align: center;
+    z-index: 1000;
     /* hidden by default */
     display: none;
 }
@@ -67,6 +68,7 @@ h1.error-message {
     text-align: center;
     line-height: normal;
     color: black;
+    z-index: 1000;
 }
 
 .visible {
