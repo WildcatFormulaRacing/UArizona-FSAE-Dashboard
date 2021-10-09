@@ -2,6 +2,7 @@ import { app, BrowserWindow, globalShortcut } from "electron";
 import { CarError, IPCEvents, PortOpenEvent, PORT_ALREADY_OPEN_ERR } from "./utils/dash-types";
 import { decodeCAN } from "./utils/dash-utils";
 import { MAIN_ENTRY, DIGITAL_ENTRY } from "./utils/dash-types";
+import Logger from "electron-log";
 
 // dashboard theme mode
 let currentMode = MAIN_ENTRY;
@@ -49,7 +50,7 @@ const createWindow = (): void => {
 	mainWindow.loadURL(MAIN_ENTRY);
 	// mainWindow.webContents.openDevTools();
 	mainWindow.webContents.on("did-finish-load", () => {
-		console.log("Dash on sent");
+		Logger.info("Dash On");
 		mainWindow.webContents.send(IPCEvents.DASH_ON);
 		connectToCan();
 	});
@@ -68,6 +69,8 @@ const connectToCan = () => {
 			msg: "CAN BUS DISCONNECTION",
 			fatal: true,
 		};
+
+        Logger.error(carErr);
 
 		mainWindow.webContents.send(IPCEvents.CAR_ERROR, carErr);
 		// start timeout loop to retry connection
@@ -90,7 +93,7 @@ app.on("ready", () => {
         // until the port is actually closed, port.close() takes callsback when
         // its closed so that's why we're using async here
 		await port.close();
-		console.log("loading");
+		Logger.info("Switching Dash Mode");
 		mainWindow.loadURL(currentMode);
 		port.open();
 	});
