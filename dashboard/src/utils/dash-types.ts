@@ -61,3 +61,5 @@ export const DIGITAL_ENTRY = "http://localhost:3000/digital";
 
 // errors
 export const PORT_ALREADY_OPEN_ERR = "Port is already open";
+
+export const MAX_RPM = 12500;
