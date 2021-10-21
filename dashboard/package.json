@@ -54,14 +54,9 @@
                             "config": "./webpack.renderer.config.js",
                             "entryPoints": [
                                 {
-                                    "html": "./src/index.html",
-                                    "js": "./src/renderer.ts",
+                                    "html": "./src/dashes/mcDash.html",
+                                    "js": "./src/mcRenderer.ts",
                                     "name": "main_window"
-                                },
-                                {
-                                    "html": "./src/digital.html",
-                                    "js": "./src/digitalRenderer.ts",
-                                    "name": "digital"
                                 }
                             ]
                         }
