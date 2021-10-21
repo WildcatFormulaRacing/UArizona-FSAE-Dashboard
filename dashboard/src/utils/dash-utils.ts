@@ -20,7 +20,7 @@ export function decodeCAN(line: string): CarData {
  * @param n {number} - amount of data points
  */
 export function getLinePoints(n: number, max?: number) {
-    max = max ?? 425;
+	max = max ?? 425;
 	// 3rd order polynomial a + bx + cx^2 + dx^3
 	const f = (x: number) => {
 		const a = 446.03;
@@ -28,15 +28,25 @@ export function getLinePoints(n: number, max?: number) {
 		const c = 0.0058;
 		const d = -0.0000039;
 
-		return a + (b * x) + (c * Math.pow(x, 2)) + (d * Math.pow(x, 3));
+		return a + b * x + c * Math.pow(x, 2) + d * Math.pow(x, 3);
 	};
 
 	// start:   coord (60, 312)
 	// end:     coord (485, 120)
 	const path = [];
-	for (let x = 60; x < max; x += (max / n)) {
+	for (let x = 60; x < max; x += max / n) {
 		path.push([x, f(x)]);
 	}
 
 	return path;
+}
+
+export function linearScale(
+	x: number,
+	in_min: number,
+	in_max: number,
+	out_min: number,
+	out_max: number
+) {
+	return ((x - in_min) * (out_max - out_min)) / ((in_max - in_min) + out_max);
 }
