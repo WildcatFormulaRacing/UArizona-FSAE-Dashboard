@@ -7,7 +7,7 @@ sudo apt upgrade -y
 sudo apt-get install xserver-xorg xinit matchbox-window-manager git vim -y
 
 # dependencies needed for the actual executable
-sudo apt install kde-cli-tools kde-runtime trash-cli libglib2.0-bin gvfs-bin rpm -y
+sudo apt install kde-cli-tools kde-runtime trash-cli libglib2.0-bin gvfs-bin libnotify4 deb rpm -y
 
 # uncomment if building on the pi
 echo "Do you want to install node, only needed if you are building? [Y,n]"
@@ -15,7 +15,7 @@ read input
 if [[ $input == "Y" || $input == "y" ]]; then
         echo "Installing Node"
         wget https://nodejs.org/dist/v14.17.6/node-v14.17.6-linux-armv7l.tar.xz
-        tar -xzf node-v14.17.6-linux-armv7l.tar.xz
+        tar xvf node-v14.17.6-linux-armv7l.tar.xz
         sudo cp -R node-v14.16.6-linux-armv7l/* /usr/local
         
         # verify
