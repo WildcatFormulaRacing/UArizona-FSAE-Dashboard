@@ -85,6 +85,8 @@ typings/
 # Webpack
 .webpack/
 
+dashboard/dist/
+
 # Electron-Forge
 out/
 .prettierrc
