@@ -19,7 +19,7 @@ if [[ $input == "Y" || $input == "y" ]]; then
         sudo cp -R node-v14.16.6-linux-armv7l/* /usr/local
         
         # verify
-        if ! command -v <the_command> &> /dev/null
+        if ! npm -v &> /dev/null
         then
             echo -e "\033[0;31mUNSUCCESSFUL NODE INSTALL, MUST INSTALL MANUALLY"
         fi
@@ -39,6 +39,7 @@ sudo dpkg -i dash-type_1.0.0-alpha_armhf.deb
 echo "Creating systemd service"
 # move the launch script
 sudo mv ./launch-dash.sh /home/pi/
+sudo mv ./preflight-dash.sh /home/pi/
 
 # move the service file
 sudo mv ./dashboard-service /lib/systemd/system/

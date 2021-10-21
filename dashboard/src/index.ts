@@ -24,6 +24,8 @@ const parser = port.pipe(new Readline({ delimiter: "\n" }));
 
 // allows serial port to be used
 app.allowRendererProcessReuse = false;
+// allows the application to be ran as root
+app.commandLine.appendArgument("--no-sandbox");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
