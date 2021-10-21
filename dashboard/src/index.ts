@@ -5,7 +5,7 @@ import { MAIN_ENTRY, DIGITAL_ENTRY } from "./utils/dash-types";
 import Logger from "electron-log";
 
 // dashboard theme mode
-let currentMode = MAIN_ENTRY;
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 
 // serial port inital
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -47,7 +47,7 @@ const createWindow = (): void => {
 	});
 
 	// and load the index.html of the app.
-	mainWindow.loadURL(MAIN_ENTRY);
+	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 	// mainWindow.webContents.openDevTools();
 	mainWindow.webContents.on("did-finish-load", () => {
 		Logger.info("Dash On");
@@ -83,20 +83,6 @@ const connectToCan = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
 	createWindow();
-	// register dashboard view switch, for now it'll be the 'd' key on the keyboard
-	// @TODO change it to a CAN event when CAN is setup so it can be controlled
-	// from the steering wheel.
-	globalShortcut.register("CommandOrControl+D", async () => {
-		// switch the dash
-		currentMode = currentMode === MAIN_ENTRY ? DIGITAL_ENTRY : MAIN_ENTRY;
-		// close serialport, it seems to bug out if we dont. Also we have to wait
-        // until the port is actually closed, port.close() takes callsback when
-        // its closed so that's why we're using async here
-		await port.close();
-		Logger.info("Switching Dash Mode");
-		mainWindow.loadURL(currentMode);
-		port.open();
-	});
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common
