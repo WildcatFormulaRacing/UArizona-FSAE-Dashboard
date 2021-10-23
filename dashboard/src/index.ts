@@ -115,6 +115,7 @@ port.on("close", () => {
 
 parser.on("data", (line: string) => {
 	const carData = decodeCAN(line);
+    Logger.info(carData);
 
 	// give to render
 	mainWindow.webContents.send(IPCEvents.CAR_DATA, carData);
