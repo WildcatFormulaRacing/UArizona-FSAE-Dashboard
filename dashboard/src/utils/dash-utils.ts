@@ -1,23 +1,27 @@
 import { CarData } from "./dash-types";
 
 export function decodeCAN(line: string): CarData {
-	const [rpm, speed, throttlePosition, gear, upTime] = line.split("\t");
+	//
+	const [, rpm, throttlePosition, gear, speed, , , upTime] = line.split("\t");
 
-    // @NOTE: uptime is used a substitute for lap time right now
-    const minutes =  Math.floor(parseInt(upTime) / 60);
-    const seconds = parseInt(upTime) % 60;
-    const currLap = `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+	// @NOTE: uptime is used a substitute for lap time right now
+	const minutes = Math.floor(parseInt(upTime) / 60);
+	const seconds = parseInt(upTime) % 60;
+	const currLap = `${String(minutes).padStart(2, "0")}:${String(
+		seconds
+	).padStart(2, "0")}`;
 
 	const carData: CarData = {
 		engineData: {
 			rpm: rpm,
 			speed: speed,
 			gear: gear === "0" ? "N" : gear,
-            throttlePosition: throttlePosition
+			throttlePosition: throttlePosition,
+			batteryVoltage: "NA",
 		},
-        lapData: {
-            currentLap: currLap
-        }
+		lapData: {
+			currentLap: currLap,
+		},
 	};
 
 	return carData;
@@ -57,5 +61,5 @@ export function linearScale(
 	out_min: number,
 	out_max: number
 ) {
-	return ((x - in_min) * (out_max - out_min)) / ((in_max - in_min) + out_max);
+	return ((x - in_min) * (out_max - out_min)) / (in_max - in_min + out_max);
 }

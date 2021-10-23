@@ -6,6 +6,7 @@ export interface EngineData {
 	speed: string;
 	gear: string;
     throttlePosition: string;
+    batteryVoltage: string;
 }
 
 export interface LapData {

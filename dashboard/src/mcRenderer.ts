@@ -12,6 +12,7 @@ import { linearScale } from "./utils/dash-utils";
 const gearContainer = $("#slot-center");
 const rpmContainer = $("#slot-center-bottom");
 const throttleText = $("#slot-value-left-1");
+const batteryText = $("#slot-value-right-1");
 const lapText = $("#slot-value-right-2");
 const errorContainer = $("#slot-error");
 const errorText = $(".error-text");
@@ -32,6 +33,7 @@ ipcRenderer.on("car-data", (e: IpcRendererEvent, data: CarData) => {
     gearContainer.html(data.engineData.gear);
     rpmContainer.html(data.engineData.rpm);
     throttleText.html(data.engineData.throttlePosition);
+    batteryText.html(data.engineData.batteryVoltage);    
     lapText.html(data.lapData.currentLap);
 
     // rev bar
