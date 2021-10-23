@@ -9,8 +9,7 @@ export interface EngineData {
 }
 
 export interface LapData {
-	currentLap: string;
-	lapDelta: string;
+    currentLap: string;
 }
 
 export interface CarData {
@@ -43,6 +42,8 @@ export enum DashColors {
 	GREEN = "#06e514",
 	YELLOW = "#ecff51",
 	RED = "#fc036f",
+    GREY = "#101010",
+    ORANGE = "#ff8200"
 }
 
 //Events
