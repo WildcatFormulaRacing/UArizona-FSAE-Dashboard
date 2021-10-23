@@ -14,6 +14,7 @@ import { linearScale } from "./utils/dash-utils";
 
 const gearContainer = $("#slot-center");
 const rpmContainer = $("#slot-center-bottom");
+const throttleText = $("#slot-value-left-1");
 const errorContainer = $("#slot-error");
 const errorText = $(".error-text");
 
@@ -30,6 +31,7 @@ ipcRenderer.on("car-data", (e: IpcRendererEvent, data: CarData) => {
     
     gearContainer.html(data.engineData.gear);
     rpmContainer.html(data.engineData.rpm);
+    throttleText.html(String(Math.random()));
 
     ctx.clearRect(0,0, 760, 50);
     ctx.fillStyle = "#101010";

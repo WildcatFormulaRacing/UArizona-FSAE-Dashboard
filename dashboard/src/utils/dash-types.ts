@@ -5,6 +5,7 @@ export interface EngineData {
 	rpm: string;
 	speed: string;
 	gear: string;
+    throttlePosition: string;
 }
 
 export interface LapData {
