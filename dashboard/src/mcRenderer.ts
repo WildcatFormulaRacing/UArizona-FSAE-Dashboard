@@ -31,7 +31,7 @@ ipcRenderer.on("car-data", (e: IpcRendererEvent, data: CarData) => {
     
     gearContainer.html(data.engineData.gear);
     rpmContainer.html(data.engineData.rpm);
-    throttleText.html(String(Math.random()));
+    throttleText.html(data.engineData.throttlePosition);
 
     ctx.clearRect(0,0, 760, 50);
     ctx.fillStyle = "#101010";
