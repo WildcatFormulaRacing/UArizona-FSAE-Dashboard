@@ -230,3 +230,7 @@ span {
         color: red;
     }
 }
+
+#slot-value-right-2 {
+    font-size: 1em;
+}
