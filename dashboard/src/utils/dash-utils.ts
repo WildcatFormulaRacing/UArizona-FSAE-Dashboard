@@ -2,22 +2,34 @@ import { CarData } from "./dash-types";
 
 export function decodeCAN(line: string): CarData {
 	//
-	const [, rpm, throttlePosition, gear, speed, , , upTime] = line.split("\t");
+	const [
+		rpm1,
+		rpm2,
+		throttlePosition,
+		gear,
+		batteryVoltage,
+		coolant,
+		upTime1,
+		upTime2,
+	] = line.split("\t");
+
+	const real = Math.trunc((parseInt(rpm1) * 256 + parseInt(rpm2)) / 6);
 
 	// @NOTE: uptime is used a substitute for lap time right now
-	const minutes = Math.floor(parseInt(upTime) / 60);
-	const seconds = parseInt(upTime) % 60;
+	const minutes = Math.floor(parseInt(upTime1) / 60);
+	const seconds = parseInt(upTime1) % 60;
 	const currLap = `${String(minutes).padStart(2, "0")}:${String(
 		seconds
 	).padStart(2, "0")}`;
 
 	const carData: CarData = {
 		engineData: {
-			rpm: rpm,
-			speed: speed,
+			rpm: String(real),
+			speed: "0",
 			gear: gear === "0" ? "N" : gear,
 			throttlePosition: throttlePosition,
-			batteryVoltage: "NA",
+			batteryVoltage: batteryVoltage,
+			coolantTemp: coolant,
 		},
 		lapData: {
 			currentLap: currLap,
