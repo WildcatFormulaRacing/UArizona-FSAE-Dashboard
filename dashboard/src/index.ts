@@ -14,8 +14,8 @@ const SerialPort = require("serialport");
 const Readline = require("@serialport/parser-readline");
 
 //@TODO make this dynamic
-const PORT = "COM3";
-const BAUDRATE = 9600;
+const PORT = "/dev/ttyACM0";
+const BAUDRATE = 115200;
 const port = new SerialPort(PORT, {
 	autoOpen: false,
 	baudRate: BAUDRATE,
@@ -115,8 +115,7 @@ port.on("close", () => {
 
 parser.on("data", (line: string) => {
 	const carData = decodeCAN(line);
-    Logger.info(carData);
-
+Logger.info(line);
 	// give to render
 	mainWindow.webContents.send(IPCEvents.CAR_DATA, carData);
 });
