@@ -14,7 +14,7 @@ export function decodeCAN(line: string): CarData {
 	] = line.split("\t");
 
 	const real = Math.trunc((parseInt(rpm1) * 256 + parseInt(rpm2)) / 6);
-
+    const realBattery = (parseInt(batteryVoltage) / 10).toFixed(1);
 	// @NOTE: uptime is used a substitute for lap time right now
 	const minutes = Math.floor(parseInt(upTime1) / 60);
 	const seconds = parseInt(upTime1) % 60;
@@ -28,7 +28,7 @@ export function decodeCAN(line: string): CarData {
 			speed: "0",
 			gear: gear === "0" ? "N" : gear,
 			throttlePosition: throttlePosition,
-			batteryVoltage: batteryVoltage,
+			batteryVoltage: String(realBattery),
 			coolantTemp: coolant,
 		},
 		lapData: {
