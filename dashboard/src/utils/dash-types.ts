@@ -50,7 +50,7 @@ export interface ErrorEmitter {
 export enum DashColors {
     GREEN = "#06e514",
     YELLOW = "#ecff51",
-    RED = "#fc036f",
+    RED = "#fc0303",
     GREY = "#101010",
     ORANGE = "#ff8200"
 }

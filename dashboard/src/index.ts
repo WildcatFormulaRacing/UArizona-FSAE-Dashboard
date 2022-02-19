@@ -97,8 +97,8 @@ const mockData = () => {
         mainWindow.webContents.send(IPCEvents.CAR_ERROR, err);
     }
 
-    // reinvoke this function every 20ms
-    timeoutId = setTimeout(mockData, 20);
+    // reinvoke this function every 15ms
+    timeoutId = setTimeout(mockData, 15);
 }
 
 // This method will be called when Electron has finished

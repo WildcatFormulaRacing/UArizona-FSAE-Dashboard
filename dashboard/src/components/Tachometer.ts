@@ -47,10 +47,16 @@ export class Tachometer {
     setValue(rpm: number) {
         // clear the frame
         this.clearFrame()
+        // change revbar color if its > 90 % of the max rpm
+        if(rpm > MAX_RPM * 0.90) {
+            this.ctx.fillStyle = DashColors.RED;
+        } else {
+            this.ctx.fillStyle = DashColors.ORANGE;
+        }
+
         // map the rpm to pixels
         const fillWidth = linearScale(rpm, 0, MAX_RPM, 0, 760);
         // set the fill color
-        this.ctx.fillStyle = DashColors.ORANGE;
         this.ctx.fillRect(0, 0, fillWidth, 50);
         // redraw tick marks
         this.drawTicks();
