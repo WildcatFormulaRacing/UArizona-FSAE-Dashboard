@@ -1,5 +1,5 @@
 import { app, BrowserWindow, globalShortcut } from "electron";
-import { CarError, IPCEvents, PortOpenEvent, PORT_ALREADY_OPEN_ERR } from "./utils/dash-types";
+import { CarError, DashColors, IPCEvents, PortOpenEvent, PORT_ALREADY_OPEN_ERR } from "./utils/dash-types";
 import { decodeCAN } from "./utils/dash-utils";
 import Logger from "electron-log";
 import { MockEngine } from "./utils/MockEngine";
@@ -77,10 +77,9 @@ const connectToCan = () => {
         const carErr: CarError = {
             status: 500,
             msg: "CAN BUS DISCONNECTION",
-            fatal: true,
+            color: DashColors.RED,
+            expire: 1000
         };
-
-        Logger.error(carErr);
 
         mainWindow.webContents.send(IPCEvents.CAR_ERROR, carErr);
         // start timeout loop to retry connection
@@ -92,8 +91,14 @@ const mockData = () => {
     // get the next line and send it to the renderer
     const dat = mockEngine.nextLine();
     mainWindow.webContents.send(IPCEvents.CAR_DATA, dat);
+    // .1% chance of simulating an error
+    if (Math.random() < 0.001) {
+        const err = mockEngine.simulateError();
+        mainWindow.webContents.send(IPCEvents.CAR_ERROR, err);
+    }
+
     // reinvoke this function every 10ms
-    timeoutId = setTimeout(mockData, 10);   
+    timeoutId = setTimeout(mockData, 10);
 }
 
 // This method will be called when Electron has finished
@@ -107,6 +112,8 @@ app.on("ready", () => {
         // invoke the mock function if we in fact are in mockMode
         if (mockMode) {
             Logger.info("MOCK MODE ENABLED");
+            // disable any errors
+            mainWindow.webContents.send(IPCEvents.END_ERROR);
             // create and set the mockEngine
             mockEngine = new MockEngine();
             mockData();
@@ -120,7 +127,7 @@ app.on("ready", () => {
             connectToCan();
         }
     })
-    
+
     createWindow();
 });
 

@@ -1,4 +1,4 @@
-import { CarData } from "./dash-types";
+import { CarData, CarError, DashColors } from "./dash-types";
 import { decodeCAN } from "./dash-utils";
 const mockEngineData = require("./mockEngineData.json");
 
@@ -30,5 +30,30 @@ export class MockEngine {
         
         // return the car data
         return carData;
+    }
+
+    /**
+     * Generates a random error
+     * @NOTE this error will always have an expire time of 3 seconds
+     */
+    simulateError() : CarError {
+        const colors = [DashColors.GREEN, DashColors.YELLOW, DashColors.RED];
+        const errorMsgs = [
+            "Uh oh stinky 🙊",
+            "Car breaking 🥵",
+            "It's probably the alternator 👽",
+            "ERROR: 🧍‍♂️",
+            "Car is hot 🤔😓😫😩",
+            "Low Fuel ⛽🐛"
+        ];
+
+        // pick a random error message and a random color
+        const carErr : CarError = {
+            msg: errorMsgs[Math.floor(Math.random() * errorMsgs.length)],
+            color: colors[Math.floor(Math.random() * colors.length)],
+            expire: 3000
+        }
+
+        return carErr;
     }
 }

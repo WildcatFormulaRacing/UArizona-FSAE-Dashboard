@@ -3,13 +3,11 @@ import $ from "jquery";
 import {
     CarData,
     CarError,
-    DashColors,
     IPCEvents,
-    MAX_RPM,
 } from "./utils/dash-types";
 import { ipcRenderer, IpcRendererEvent } from "electron";
-import { linearScale } from "./utils/dash-utils";
 import { Tachometer } from "./components/Tachometer";
+import { ErrorHandler } from "./components/ErrorText";
 
 const gearContainer = $("#slot-center");
 const rpmContainer = $("#slot-center-bottom");
@@ -17,20 +15,18 @@ const throttleText = $("#slot-value-left-1");
 const coolantText = $("#slot-value-left-2");
 const batteryText = $("#slot-value-right-1");
 const lapText = $("#slot-value-right-2");
-const errorContainer = $("#slot-error");
-const errorText = $(".error-text");
+const errorContainerElem = $("#slot-error");
+const errorTextElem = $(".error-text");
 
 //@ts-expect-error
 const canvas: HTMLCanvasElement = $("#canvas").get(0);
 const tach = new Tachometer("#canvas", canvas.getContext("2d"));
+
+// Error handler class
+const errorHandler = new ErrorHandler(errorContainerElem, errorTextElem);
 //////////// EVENTS ////////////
 
 ipcRenderer.on(IPCEvents.CAR_DATA, (e: IpcRendererEvent, data: CarData) => {
-    // remove any disconnection warnings
-    if (errorContainer.hasClass("visible")) {
-        errorContainer.removeClass("visible");
-    }
-
     // fill text slots
     gearContainer.html(data.engineData.gear);
     rpmContainer.html(data.engineData.rpm);
@@ -42,8 +38,18 @@ ipcRenderer.on(IPCEvents.CAR_DATA, (e: IpcRendererEvent, data: CarData) => {
 
 });
 
+/**
+ * Sends any incoming errors to the error handler
+ */
 ipcRenderer.on(IPCEvents.CAR_ERROR, (e: IpcRendererEvent, error: CarError) => {
-    errorContainer.addClass("visible");
-    errorText.html(error.msg);
+    // send the error to the error class
+    errorHandler.setError(error);
 });
+
+/**
+ * Disables any active errors
+ */
+ipcRenderer.on(IPCEvents.END_ERROR, () => {
+    errorHandler.disableError();
+})
 

@@ -217,18 +217,10 @@ span {
 }
 
 .error-text {
-    animation: blinker 1s infinite;
     color: red;
     text-align: center;
     font-size: 50px;
     font-family: fantasy;
-}
-
-@keyframes blinker {
-    50% {
-        opacity: 0;
-        color: red;
-    }
 }
 
 #slot-value-right-2 {
