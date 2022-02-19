@@ -67,3 +67,16 @@ export const DIGITAL_ENTRY = "http://localhost:3000/digital";
 export const PORT_ALREADY_OPEN_ERR = "Port is already open";
 
 export const MAX_RPM = 12500;
+
+
+// Gauge Classes
+/**
+ * BaseGauge is the interface that all gauges will implement
+ * contains the HTML id, the actual DOM html element, and a function
+ * to set the value of that gauge
+ */
+export interface BaseGauge {
+    id: string;
+    element: JQuery<HTMLElement>;
+    setValue(value: string) : void;
+}
