@@ -2,9 +2,9 @@
  * not a .d.ts file because of enum ts bug
  */
 export interface EngineData {
-	rpm: string;
-	speed: string;
-	gear: string;
+    rpm: string;
+    speed: string;
+    gear: string;
     throttlePosition: string;
     batteryVoltage: string;
     coolantTemp: string;
@@ -15,35 +15,42 @@ export interface LapData {
 }
 
 export interface CarData {
-	engineData: EngineData;
-	lapData?: LapData;
+    engineData: EngineData;
+    lapData?: LapData;
 }
 
+/**
+ * @param msg {string} - the message to display
+ * @param status {number} - the error code number, for logging
+ * @param color {DashColors} - the color that the text should be
+ * @param expire {number} - the time in milliseconds that the msg should be disabled after
+ */
 export interface CarError {
-	status: number;
-	msg: string;
-	fatal: boolean;
+    msg: string;
+    status?: number;
+    color?: DashColors;
+    expire?: number;
 }
 
 export interface PortOpenEvent {
-	message?: string;
+    message?: string;
 }
 
 export interface Slot {
-	text: JQuery<HTMLElement>;
-	// optional because center element doesn't have a label
-	label?: JQuery<HTMLElement>;
+    text: JQuery<HTMLElement>;
+    // optional because center element doesn't have a label
+    label?: JQuery<HTMLElement>;
 }
 
 export interface ErrorEmitter {
-	container: JQuery<HTMLElement>;
-	message: JQuery<HTMLElement>;
+    container: JQuery<HTMLElement>;
+    message: JQuery<HTMLElement>;
 }
 
 export enum DashColors {
-	GREEN = "#06e514",
-	YELLOW = "#ecff51",
-	RED = "#fc036f",
+    GREEN = "#06e514",
+    YELLOW = "#ecff51",
+    RED = "#fc036f",
     GREY = "#101010",
     ORANGE = "#ff8200"
 }
@@ -57,6 +64,8 @@ export enum IPCEvents {
     CAR_ERROR = "car-error",
     // one time event call for finished DOM load
     DASH_ON = "dash-on",
+    // Disables any ongoing car errors
+    END_ERROR = "end-error"
 }
 
 // Entry Points
@@ -78,5 +87,5 @@ export const MAX_RPM = 12500;
 export interface BaseGauge {
     id: string;
     element: JQuery<HTMLElement>;
-    setValue(value: string) : void;
+    setValue(value: string): void;
 }
