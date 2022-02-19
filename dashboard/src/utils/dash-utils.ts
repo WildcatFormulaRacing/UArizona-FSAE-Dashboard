@@ -12,8 +12,9 @@ export function decodeCAN(line: string): CarData {
 		upTime1,
 		upTime2,
 	] = line.split("\t");
-
-	const real = Math.trunc((parseInt(rpm1) * 256 + parseInt(rpm2)) / 6);
+    // rpm1 represents the top 8 bits and rpm2 represents the lower 8 bits
+    // here we just convert them into a single integer
+    const rpm = Math.trunc((parseInt(rpm1) << 8) | parseInt(rpm2)) 
     const realBattery = (parseInt(batteryVoltage) / 10).toFixed(1);
 	// @NOTE: uptime is used a substitute for lap time right now
 	const minutes = Math.floor(parseInt(upTime1) / 60);
@@ -24,7 +25,7 @@ export function decodeCAN(line: string): CarData {
 
 	const carData: CarData = {
 		engineData: {
-			rpm: String(real),
+			rpm: String(rpm),
 			speed: "0",
 			gear: gear === "0" ? "N" : gear,
 			throttlePosition: throttlePosition,
