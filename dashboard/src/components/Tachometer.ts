@@ -20,13 +20,14 @@ export class Tachometer {
         this.id = id;
         this.ctx = context;
         //set the intial background
-        this.setBackground();
+        this.clearFrame();
+        this.drawTicks();
     }
 
     /**
      * Sets the grey background and tick marks
      */
-    private setBackground() {
+    private drawTicks() {
         for (let x = 76; x < 760; x += (760 / 10)) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, 15);
@@ -37,13 +38,21 @@ export class Tachometer {
         }
     }
 
+    private clearFrame() {
+        this.ctx.clearRect(0, 0, 760, 50);
+        this.ctx.fillStyle = DashColors.GREY;
+        this.ctx.fillRect(0, 0, 760, 51);
+    }
+
     setValue(rpm: number) {
+        // clear the frame
+        this.clearFrame()
         // map the rpm to pixels
         const fillWidth = linearScale(rpm, 0, MAX_RPM, 0, 760);
         // set the fill color
         this.ctx.fillStyle = DashColors.ORANGE;
         this.ctx.fillRect(0, 0, fillWidth, 50);
         // redraw tick marks
-        this.setBackground();
+        this.drawTicks();
     }
 }
