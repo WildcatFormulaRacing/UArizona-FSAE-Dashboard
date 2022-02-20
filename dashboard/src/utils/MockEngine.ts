@@ -1,5 +1,6 @@
-import { CarData, CarError, DashColors } from "./dash-types";
-import { decodeCAN } from "./dash-utils";
+import { CANChannel, CANMessage, CarData, CarError, DashColors } from "./dash-types";
+
+const can = require('socketcan');
 const mockEngineData = require("./mockEngineData.json");
 
 export class MockEngine {
@@ -7,20 +8,34 @@ export class MockEngine {
     private mockData: string[];
     // the current point in time of the engine
     private currPointer: number;
+    // Woah any type?? yeah, socketcan doesn't have any typings :(
+    private channel: any;
 
     constructor() {
         // load in the mock data and set the pointer to 0
         //@ts-ignore
         this.mockData = mockEngineData;
         this.currPointer = 0;
+
+        // @NOTE super important, all mock messages will be sent though a virutal
+        // can bus called vcan0
+        this.channel = can.createRawChannel(CANChannel.VIRTUAL_CAN, true);
     }
 
     /**
      * reads the next line in the from the mock data and returns a CarData Object
      */
-    nextLine(): CarData {
-        // load the car data
-        const carData = decodeCAN(this.mockData[this.currPointer]);
+    nextLine(): void {
+        // gets the next reading
+        const nextLine = this.mockData[this.currPointer];
+        // read in the next line of the data and convert it to an 8 byte buffer
+        const buff = Buffer.from(nextLine);
+        // @TODO use real can id
+        const msg : CANMessage = {
+            id: 500,
+            data: buff
+        }
+
         // increment or reset the pointer
         if(this.currPointer < this.mockData.length - 1) {
             this.currPointer++;
@@ -28,8 +43,8 @@ export class MockEngine {
             this.currPointer = 0;
         }
         
-        // return the car data
-        return carData;
+        // send the message through virtual can
+        this.channel.send(msg);
     }
 
     /**
