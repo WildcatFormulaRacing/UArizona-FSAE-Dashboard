@@ -6,7 +6,7 @@
 ### @NOTE this needs to be ran as root because it installs an app
 
 # check for root permissions
-if [ "$EUID" -ne 0]
+if [ "$EUID" -ne 0 ]
 then
     echo "Script must be ran as root!"
     exit
