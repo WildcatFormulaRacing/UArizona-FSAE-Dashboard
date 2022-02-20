@@ -80,6 +80,39 @@ export const MAX_RPM = 12500;
 export const SCREEN_WIDTH = 640;
 export const SCREEN_HEIGHT = 480;
 
+// Can bus message
+export interface CANMessage {
+    id: number;
+    // 8 byte buffer
+    data: Buffer;
+}
+
+// CAN BUS EVENTS
+export enum CANEvents {
+    // for recieving can messages
+    ON_MESSAGE = "onMessage"
+}
+
+// CAN bus's
+export enum CANChannel {
+    CAN_BUS = "can0",
+    VIRTUAL_CAN = "vcan0"
+}
+
+// CAN Bus message masks, entire can bus message is 8 bytes or 64 bits
+// because its 64bits we need to make our masks the equivalent data type of bigint
+// top 16 bits - rpm is big
+export const RPM_MASK = BigInt('0xFFFF000000000000');
+// next 8 bits
+export const THROTTLE_MASK = BigInt('0xFF0000000000');
+// next 8 bits
+export const GEAR_MASK = BigInt('0xFF00000000');
+//next 8 bits
+export const BATTERY_MASK = BigInt('0xFF000000');
+//next 8 bits
+export const COOLANT_MASK = BigInt('0xFF0000');
+// last 16 bits - time is big
+export const UPTIME_MASK = BigInt('0xFFFF');
 
 // Gauge Classes
 /**

@@ -1,32 +1,22 @@
 import { app, BrowserWindow, globalShortcut } from "electron";
-import { CarError, DashColors, IPCEvents, PortOpenEvent, PORT_ALREADY_OPEN_ERR } from "./utils/dash-types";
+import { CANChannel, CANEvents, CANMessage, CarError, DashColors, IPCEvents, PortOpenEvent, PORT_ALREADY_OPEN_ERR } from "./utils/dash-types";
 import { decodeCAN } from "./utils/dash-utils";
 import Logger from "electron-log";
 import { MockEngine } from "./utils/MockEngine";
 
-// dashboard theme mode
-declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
+// socket can stuff
+const can = require('socketcan');
+// initalize the channel, this will be changed if mock mode is enabled
+let channel = can.createRawChannel(CANChannel.CAN_BUS, true);
 
-// serial port inital
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const SerialPort = require("serialport");
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const Readline = require("@serialport/parser-readline");
 // if true port will be close and mock mode will be enabled
 let mockMode = false;
 let mockEngine: MockEngine;
 //@ts-ignore, timeoutid for cancelling mock mode
 let timeoutId = null;
 
-//@TODO make this dynamic
-const PORT = "/dev/ttyACM0";
-const BAUDRATE = 115200;
-const port = new SerialPort(PORT, {
-    autoOpen: false,
-    baudRate: BAUDRATE,
-});
-const parser = port.pipe(new Readline({ delimiter: "\n" }));
-
+// dashboard theme mode
+declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 // allows serial port to be used
 app.allowRendererProcessReuse = false;
 // allows the application to be ran as root
@@ -59,43 +49,33 @@ const createWindow = (): void => {
     mainWindow.webContents.on("did-finish-load", () => {
         Logger.info("Dash On");
         mainWindow.webContents.send(IPCEvents.DASH_ON);
-        // only connect if we are not in mock mode
-        if (!mockMode) {
-            connectToCan();
-        }
+        connectToCan();
     });
 };
 
+/**
+ * adds an event listener to the CAN interface, as well as a callback that
+ * sends an IPC event of the car data back to the renderer
+ */
 const connectToCan = () => {
-    port.open((err: PortOpenEvent) => {
-        // if there was no err, port opened successfully
-        // special exception for if it tries to open the port when its already
-        // open, this usually happens during a dash switch, but is dealed with here
-        if (!err || err.message === PORT_ALREADY_OPEN_ERR || mockMode) return;
+    // initalize the can listener
+    channel.addListener(CANEvents.ON_MESSAGE, (msg: CANMessage) => {
+        // decode the can message
+        const data = decodeCAN(msg.data);
+        // send the data to the renderer
+        mainWindow.webContents.send(IPCEvents.CAR_DATA, data);
+    })
+}
 
-        // close events will be considered a fatal error
-        const carErr: CarError = {
-            status: 500,
-            msg: "CAN BUS DISCONNECTION",
-            color: DashColors.RED,
-            expire: 1000
-        };
-
-        mainWindow.webContents.send(IPCEvents.CAR_ERROR, carErr);
-        // start timeout loop to retry connection
-        setTimeout(() => connectToCan(), 2000);
-    });
-};
-
+/**
+ * PRE-CONDITION: MOCK MODE MUST BE ENABLED
+ * this will invoke the mockengine to send the next message through the virtual
+ * CAN Bus (vcan0)
+ */
 const mockData = () => {
-    // get the next line and send it to the renderer
-    const dat = mockEngine.nextLine();
-    mainWindow.webContents.send(IPCEvents.CAR_DATA, dat);
-    // .1% chance of simulating an error
-    if (Math.random() < 0.001) {
-        const err = mockEngine.simulateError();
-        mainWindow.webContents.send(IPCEvents.CAR_ERROR, err);
-    }
+    // send the next line through vcan
+    mockEngine.nextLine();
+    //@TODO IMPLEMENT MOCK ERRORS
 
     // reinvoke this function every 15ms
     timeoutId = setTimeout(mockData, 15);
@@ -116,14 +96,22 @@ app.on("ready", () => {
             mainWindow.webContents.send(IPCEvents.END_ERROR);
             // create and set the mockEngine
             mockEngine = new MockEngine();
+            // set the can channel to virtual can;
+            channel = can.createRawChannel(CANChannel.VIRTUAL_CAN, true);
+            // re-initalize the can listener
+            connectToCan();
+            // start the engine
             mockData();
         } else {
             Logger.info("MOCK MODE DISABLED");
-            // garbage
+            // reset everything back to real mode
             //@ts-ignore
             clearTimeout(timeoutId)
             timeoutId = null;
             mockEngine = null;
+            // ressetting the can channel to real can
+            channel = can.createRawChannel(CANChannel.CAN_BUS, true);
+            // re-initalize the can listener
             connectToCan();
         }
     })
@@ -146,23 +134,4 @@ app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         createWindow();
     }
-});
-
-////////// EVENTS /////////////
-port.on("open", () => {
-    port.resume();
-});
-
-port.on("close", () => {
-    // we want to ignore any close events if mockmode is enabled
-    if (!mockMode) {
-        connectToCan();
-    }
-});
-
-parser.on("data", (line: string) => {
-    const carData = decodeCAN(line);
-    Logger.info(line);
-    // give to render
-    mainWindow.webContents.send(IPCEvents.CAR_DATA, carData);
 });
