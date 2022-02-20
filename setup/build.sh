@@ -28,6 +28,6 @@ npm run build
 
 # this builds the application in ./out/dashboard-linux-armv7l
 echo "app built building into .deb"
-electron-install-debian --src ./out/dashboard-linux-armv7l/ --dest /home/pi/deb/ --arch armhf
+electron-installer-debian --src ./out/dashboard-linux-armv7l/ --dest /home/pi/deb/ --arch armhf
 
 echo "App build at /home/pi/deb/"
