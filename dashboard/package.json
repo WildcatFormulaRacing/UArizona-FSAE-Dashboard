@@ -91,7 +91,6 @@
     "dependencies": {
         "electron-log": "^4.4.1",
         "electron-squirrel-startup": "^1.0.0",
-        "jquery": "^3.6.0",
-        "serialport": "^9.0.2"
+        "jquery": "^3.6.0"
     }
 }
