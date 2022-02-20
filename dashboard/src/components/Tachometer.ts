@@ -28,7 +28,7 @@ export class Tachometer {
      * Sets the grey background and tick marks
      */
     private drawTicks() {
-        for (let x = 76; x < 760; x += (760 / 10)) {
+        for (let x = 60; x < 608; x += (608 / 10)) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, 15);
             this.ctx.lineTo(x, 30);
@@ -39,9 +39,9 @@ export class Tachometer {
     }
 
     private clearFrame() {
-        this.ctx.clearRect(0, 0, 760, 50);
+        this.ctx.clearRect(0, 0, 608, 50);
         this.ctx.fillStyle = DashColors.GREY;
-        this.ctx.fillRect(0, 0, 760, 51);
+        this.ctx.fillRect(0, 0, 608, 51);
     }
 
     setValue(rpm: number) {
@@ -55,7 +55,7 @@ export class Tachometer {
         }
 
         // map the rpm to pixels
-        const fillWidth = linearScale(rpm, 0, MAX_RPM, 0, 760);
+        const fillWidth = linearScale(rpm, 0, MAX_RPM, 0, 608);
         // set the fill color
         this.ctx.fillRect(0, 0, fillWidth, 50);
         // redraw tick marks

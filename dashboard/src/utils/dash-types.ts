@@ -74,8 +74,11 @@ export const DIGITAL_ENTRY = "http://localhost:3000/digital";
 
 // errors
 export const PORT_ALREADY_OPEN_ERR = "Port is already open";
-
+// in revolutions per minute
 export const MAX_RPM = 12500;
+// screen dimensions in pixels
+export const SCREEN_WIDTH = 640;
+export const SCREEN_HEIGHT = 480;
 
 
 // Gauge Classes

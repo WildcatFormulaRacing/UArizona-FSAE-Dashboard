@@ -13,7 +13,7 @@
 }
 
 :root {
-    --screen-width: 800px;
+    --screen-width: 640px;
     --screen-height: 480px;
 }
 
@@ -95,19 +95,19 @@ span {
 /* mcDash */
 
 .slot {
-    font-size: 2em;
+    font-size: 1.5em;
     position: absolute;
     height: 51.2px;
     top: 326px;
     z-index: 100000;
     border-color: rgb(255, 243, 243);
     left: 0px;
-    width: 250px;
+    width: 210px;
     white-space: nowrap;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    grid-gap: 50px;
-    justify-items: flex-start;
+    grid-gap: 40px;
+    justify-items: self-start;
 }
 
 .left-1 {
@@ -132,28 +132,28 @@ span {
 
 .right-1 {
     top: 220px;
-    left: 535px;
+    left: 425px;
 }
 
 .right-2 {
     top: 280px;
-    left: 535px;
+    left: 425px;
 }
 
 .right-3 {
     top: 345px;
-    left: 535px;
+    left: 425px;
 }
 
 .right-4 {
     top: 405px;
-    left: 535px;
+    left: 425px;
 }
 
 .slot-center {
     position: absolute;
-    left: 264px;
-    width: 272px;
+    left: 215px;
+    width: 210px;
     height: 171.4px;
     top: 219px;
     background-image: none;
@@ -172,9 +172,9 @@ span {
 
 .slot-center-bottom {
     position: absolute;
-    left: 264px;
+    left: 215px;
     top: 405px;
-    width: 272px;
+    width: 210px;
     height: 51.2px;
     background-image: none;
     background-color: transparent;
@@ -198,7 +198,7 @@ span {
 #slot-center-bottom {
     text-align: center;
     font-family: fantasy;
-    font-size: 40px;
+    font-size: 20px;
     letter-spacing: .4em;
 }
 
@@ -211,7 +211,7 @@ span {
     justify-content: center;
     top: 80px;
     left: 0px;
-    width: 800px;
+    width: 640px;
     display: none;
     word-break: break-all;
 }
