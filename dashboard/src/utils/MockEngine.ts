@@ -20,6 +20,7 @@ export class MockEngine {
         // @NOTE super important, all mock messages will be sent though a virutal
         // can bus called vcan0
         this.channel = can.createRawChannel(CANChannel.VIRTUAL_CAN, true);
+        this.channel.start();
     }
 
     /**
