@@ -49,6 +49,7 @@ const createWindow = (): void => {
     mainWindow.webContents.on("did-finish-load", () => {
         Logger.info("Dash On");
         mainWindow.webContents.send(IPCEvents.DASH_ON);
+        // start the channel
         connectToCan();
     });
 };
@@ -64,7 +65,8 @@ const connectToCan = () => {
         const data = decodeCAN(msg.data);
         // send the data to the renderer
         mainWindow.webContents.send(IPCEvents.CAR_DATA, data);
-    })
+    });
+    channel.start();
 }
 
 /**
@@ -99,9 +101,8 @@ app.on("ready", () => {
             // set the can channel to virtual can;
             channel.stop();
             channel = can.createRawChannel(CANChannel.VIRTUAL_CAN, true);
-            channel.start();
             // re-initalize the can listener
-            connectToCan();
+            connectToCan(); // can channel is started here
             // start the engine
             mockData();
         } else {
@@ -114,9 +115,8 @@ app.on("ready", () => {
             // ressetting the can channel to real can
             channel.stop();
             channel = can.createRawChannel(CANChannel.CAN_BUS, true);
-            channel.start();
             // re-initalize the can listener
-            connectToCan();
+            connectToCan(); // can channel is started here
         }
     })
 
