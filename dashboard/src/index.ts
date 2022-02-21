@@ -49,6 +49,8 @@ const createWindow = (): void => {
     mainWindow.webContents.on("did-finish-load", () => {
         Logger.info("Dash On");
         mainWindow.webContents.send(IPCEvents.DASH_ON);
+        // start the channel
+        channel.start();
         connectToCan();
     });
 };
