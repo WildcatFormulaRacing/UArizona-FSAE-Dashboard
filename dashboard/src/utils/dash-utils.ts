@@ -2,7 +2,7 @@ import { BATTERY_MASK, CarData, COOLANT_MASK, GEAR_MASK, RPM_MASK, THROTTLE_MASK
 
 export function decodeCAN(buff: Buffer): CarData {
     // read the 64 bits
-    const data = buff.readBigInt64LE();
+    const data = buff.readBigInt64BE();
     // perform the masks @NOTE we are also converting these bigints back to normal
     // 4 byte integers, because we know that they are within the size range for int
     // there's no reason to use up the memory to store the big bois here
