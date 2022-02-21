@@ -99,7 +99,6 @@ app.on("ready", () => {
             // create and set the mockEngine
             mockEngine = new MockEngine();
             // set the can channel to virtual can;
-            channel.stop();
             channel = can.createRawChannel(CANChannel.VIRTUAL_CAN, true);
             // re-initalize the can listener
             connectToCan(); // can channel is started here
@@ -113,7 +112,6 @@ app.on("ready", () => {
             timeoutId = null;
             mockEngine = null;
             // ressetting the can channel to real can
-            channel.stop();
             channel = can.createRawChannel(CANChannel.CAN_BUS, true);
             // re-initalize the can listener
             connectToCan(); // can channel is started here
