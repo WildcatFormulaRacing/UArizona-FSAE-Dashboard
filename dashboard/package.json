@@ -61,6 +61,13 @@
                             ]
                         }
                     }
+                ],
+                [
+                    "@timfish/forge-externals-plugin",
+                    {
+                        "externals": ["socketcan"],
+                        "includeDeps": true
+                    }
                 ]
             ]
         }
@@ -72,11 +79,10 @@
         "@electron-forge/maker-squirrel": "^6.0.0-beta.29",
         "@electron-forge/maker-zip": "^6.0.0-beta.60",
         "@electron-forge/plugin-webpack": "6.0.0-beta.54",
-        "@timfish/webpack-asset-relocator-loader": "0.1.0",
         "@types/jquery": "^3.5.6",
         "@typescript-eslint/eslint-plugin": "^4.0.1",
         "@typescript-eslint/parser": "^4.0.1",
-        "copy-webpack-plugin": "^10.2.4",
+        "@timfish/forge-externals-plugin": "^0.1.2",
         "css-loader": "^5.1.1",
         "electron": "13.0.0",
         "electron-rebuild": "^3.2.3",
@@ -93,6 +99,6 @@
         "electron-log": "^4.4.1",
         "electron-squirrel-startup": "^1.0.0",
         "jquery": "^3.6.0",
-        "socketcan": "^2.5.0"
+        "socketcan": "^3.0.0"
     }
 }

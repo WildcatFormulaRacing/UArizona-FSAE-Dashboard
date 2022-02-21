@@ -1,4 +1,3 @@
-import { NormalModuleReplacementPlugin } from "webpack";
 const rules = require('./webpack.rules');
 const plugins = require('./webpack.plugins');
 
@@ -12,14 +11,11 @@ module.exports = {
     module: {
         rules,
     },
-    plugins: [
-        ...plugins,
-        new NormalModuleReplacementPlugin(
-            /^bindings$/,
-            `${__dirname}/src/bindings`
-        )
-    ],
+    plugins: plugins,
     resolve: {
         extensions: ['.js', '.ts', '.jsx', '.tsx', '.css']
     },
+    externals: {
+        "socketcan": "commonjs2 socketcan"
+    }
 };
