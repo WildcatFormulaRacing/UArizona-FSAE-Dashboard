@@ -12,6 +12,7 @@ const ws2812x = require("@gbkwiatt/node-rpi-ws281x-native");
 const GREEN = 0x00FF00;
 const BLUE = 0x0000FF;
 const RED = 0xFF0000;
+const YELLOW = 0xFFFF00;
 const MAX_RPM = 12500;
 
 class LedController {
@@ -95,7 +96,17 @@ class LedController {
         ws2812x.reset();
     }
 
+    /**
+     * Given an rpm, this function will determine how many LED's to light up
+     * and which color to let them up
+     * @param {number} rpm 
+     */
     setRpm(rpm) {
+        // clearing any idle detectors
+        if (this.timeout) {
+            clearTimeout(this.timeout);
+            this.timeout = null;
+        }
         // clear the last 'frame'
         ws2812x.reset();
         // scale the rpm towards the size of the led strips
@@ -116,6 +127,35 @@ class LedController {
 
         // render it
         ws2812x.render();
+    }
+
+
+    /**
+     * setIdle will flash the LED's yellow every 3 seconds
+     */
+    async setIdle() {
+        // clear and idle detections
+        this.timeout = null;
+        // clear the frame
+        ws2812x.reset();
+        // fill the first three LED's
+        for (let i = 0; i < this.ledCount; i++) {
+            this.ledStrip[i] = YELLOW;
+        }
+
+        // flash the LEDS yellow
+        for (let i = 0; i < 3; i++) {
+            this.channel.brightness = 0;
+            ws2812x.render();
+            await this.#delay(600);
+            this.channel.brightness = 100;
+            ws2812x.render();
+            await this.#delay(600);
+
+        }
+
+        this.timeout = setTimeout(() => this.setIdle(), 3000);
+
     }
 }
 

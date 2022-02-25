@@ -20,12 +20,46 @@ const ledController = new LedController(12, 21);
 // run test
 ledController.test();
 
+
+/**
+ * Debounce will execute a given function after the specified debounce time. 
+ * This is used for idle detection of CAN Bus
+ * @param {(any => any)} func 
+ * @param {null | number} timeout 
+ * @returns 
+ */
+function debounce(func, timeout = 400){
+	let timer;
+	return (...args) => {
+		clearTimeout(timer);
+		timer = setTimeout(() => {func.apply(this, args);}, timeout);
+	};
+}
+
+
+/**
+ * Debounce for Can Bus idle detection. This function is called after every
+ * recieved input from can bus. However, it will only actually execute if 
+ * 1 second has elapsed from the last time it was called. Hence there is radio
+ * silence on can bus
+ */
+const setIdle = debounce(() => ledController.setIdle(), 1000);
+
 channel.addListener('onMessage', (msg) => {
     // we only care about the rpm here
-    const data = msg.readBigInt64BE();
+    const data = msg.data.readBigInt64BE();
     const rpm = Number((data & RPM_MASK) >> BigInt(48));
     // set the lights
     ledController.setRpm(rpm);
-})
+
+    // debounce
+    setIdle();
+});
+
+
+// start idle detection
+setTimeout(() => {
+	setIdle();
+}, 3000);
 
 channel.start();
