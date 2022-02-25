@@ -7,7 +7,8 @@ import {
 } from "./utils/dash-types";
 import { ipcRenderer, IpcRendererEvent } from "electron";
 import { Tachometer } from "./components/Tachometer";
-import { ErrorHandler } from "./components/ErrorText";
+import { ErrorHandler } from "./components/ErrorHandler";
+import { LedController } from "./components/LedController";
 
 const gearContainer = $("#slot-center");
 const rpmContainer = $("#slot-center-bottom");
@@ -17,6 +18,7 @@ const batteryText = $("#slot-value-right-1");
 const lapText = $("#slot-value-right-2");
 const errorContainerElem = $("#slot-error");
 const errorTextElem = $(".error-text");
+const ledController = new LedController(12, 21);
 
 //@ts-expect-error
 const canvas: HTMLCanvasElement = $("#canvas").get(0);
@@ -25,6 +27,10 @@ const tach = new Tachometer("#canvas", canvas.getContext("2d"));
 // Error handler class
 const errorHandler = new ErrorHandler(errorContainerElem, errorTextElem);
 //////////// EVENTS ////////////
+ipcRenderer.on(IPCEvents.DASH_ON, () => {
+    // boot up the LED's
+    ledController.test();
+})
 
 ipcRenderer.on(IPCEvents.CAR_DATA, (e: IpcRendererEvent, data: CarData) => {
     // fill text slots

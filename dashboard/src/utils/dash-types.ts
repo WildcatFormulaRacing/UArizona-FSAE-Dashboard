@@ -125,3 +125,20 @@ export interface BaseGauge {
     element: JQuery<HTMLElement>;
     setValue(value: string): void;
 }
+
+// Optional items to specify for the LedContoller
+export interface LedOptions {
+    dma?: number;
+    freq?: number;
+    gpio?: number;
+    invert: boolean;
+    brightness?: number;
+    stripType?: string;
+}
+
+// colors for LED strips
+export enum LedColors {
+    GREEN = 0x00FF00,
+    BLUE = 0x0000FF,
+    RED = 0xFF0000
+}
