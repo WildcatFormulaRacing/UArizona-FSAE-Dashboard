@@ -77,21 +77,21 @@ class LedController {
              * on async/await code
              */
             ws2812x.render();
-            await this.delay(50);
+            await this.#delay(50);
         }
 
         // flash the LED's
         for (let i = 0; i < 5; i++) {
-            this.channel.brightness(0);
+            this.channel.brightness = 0;
             ws2812x.render();
-            await this.delay(50);
-            this.channel.brightness(255);
+            await this.#delay(50);
+            this.channel.brightness = 255;
             ws2812x.render();
-            await this.delay(50);
+            await this.#delay(50);
         }
 
         // turn them off after 100ms
-        this.delay(100);
+        this.#delay(100);
         ws2812x.reset();
     }
 
@@ -102,7 +102,7 @@ class LedController {
         const maxLeds = this.#scale(rpm);
 
         // light them up
-        for (let pix = 0; pix < maxLeds; i++) {
+        for (let pix = 0; pix < maxLeds; pix++) {
             if (pix < this.sectionSize) {
                 // green lights
                 this.ledStrip[pix] = GREEN;
