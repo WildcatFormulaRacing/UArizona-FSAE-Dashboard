@@ -5,6 +5,8 @@ This repository contains the dashboard software for the University of Arizona Wi
 ![demo](https://user-images.githubusercontent.com/50720185/138546363-ae7a3a3d-7110-40ea-8543-fcc20cae0525.gif)
 
 # Getting Started
+__**README OUTDATED**__
+
 This package is intended to be ran on a Raspberry Pi (arm based) running some "lite" version of Raspberry Pi OS (this is what the setup script assumes). To get started, first clone the repository:
 ```
 git clone https://github.com/WildcatFormulaRacing/UArizona-FSAE-Dashboard.git
