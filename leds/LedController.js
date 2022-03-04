@@ -13,8 +13,8 @@ const GREEN = 0x00FF00;
 const BLUE = 0x0000FF;
 const RED = 0xFF0000;
 const YELLOW = 0xFFFF00;
-const MAX_RPM = 12500;
-
+const MAX_RPM = 9000;
+const MIN_RPM = 5000;
 class LedController {
 
     constructor(ledCount, gpioPin) {
@@ -36,6 +36,13 @@ class LedController {
 
         // the actual array of leds
         this.ledStrip = this.channel.array;
+
+        // the amount of LED's that was filled last, this is used to reduce
+        // the amount of updates we have to do for the LED's
+        this.lastLedCount = -1;
+        this.lastRedline = 0;
+        // a timeout id for idle detection
+        this.timeout = null;
     }
 
     /**
@@ -50,13 +57,26 @@ class LedController {
     }
 
     /**
+     * Busy waiting blocks the thread
+     * BE CAREFUL THIS SHOULDNT BE USED 
+     * @param {Number} ms 
+     */
+    #blocking_delay(ms) {
+        const stop = new Date().getTime();
+        console.log("BLOCKED");
+        while (new Date().getTime() < stop + ms) { }
+        console.log("UNBLOCKED");
+    }
+
+    /**
      * Scales the rpm to max number of LEDs that it should light up
      * Ex if the RPM's are 50% of the max, only half of the LEDS should light up
      * @param {number} rpm 
      */
     #scale(rpm) {
-        return Math.floor((rpm * this.ledCount) / (MAX_RPM + this.ledCount));
+        return Math.floor(((rpm - MIN_RPM) * this.ledCount) / ((MAX_RPM - MIN_RPM) + this.ledCount));
     }
+
 
     async test() {
         // light up the LED's one at a time
@@ -71,12 +91,6 @@ class LedController {
                 this.ledStrip[pix] = RED;
             }
 
-            /**
-             * @NOTE hey this kinda looks like blocking code, isn't that bad?
-             * Yes, BUT! it's not actually blocking, its queueing this code
-             * to execute after the delay. The MDN docs have really good resources
-             * on async/await code
-             */
             ws2812x.render();
             await this.#delay(50);
         }
@@ -107,10 +121,31 @@ class LedController {
             clearTimeout(this.timeout);
             this.timeout = null;
         }
+        // get the amount of LED's we need to light up
+        const maxLeds = this.#scale(rpm);
+        // check to see if this is a NEW redline state
+        if (maxLeds >= (this.ledCount - 2)) {
+            if(new Date().getTime() - this.lastRedline > 200) {
+                this.flashRedline();
+            }
+            return; // theres nothing left in this function that we want to do
+        }
+        if (this.lastLedCount === maxLeds) {
+            // check to see if we actually need to update the leds
+            return;
+        } else {
+
+            // lastly set the new ledcount
+            this.lastLedCount = maxLeds;
+        }
+
+        // otherwise fill up the leds
+        this.fillLeds(maxLeds);
+    }
+
+    fillLeds(maxLeds) {
         // clear the last 'frame'
         ws2812x.reset();
-        // scale the rpm towards the size of the led strips
-        const maxLeds = this.#scale(rpm);
 
         // light them up
         for (let pix = 0; pix < maxLeds; pix++) {
@@ -119,13 +154,35 @@ class LedController {
                 this.ledStrip[pix] = GREEN;
             } else if (pix >= this.sectionSize && pix < this.sectionSize * 2) {
                 // blue lights
-                this.ledStrip[pix] = BLUE;
+                this.ledStrip[pix] = YELLOW;
             } else {
                 this.ledStrip[pix] = RED;
             }
         }
 
-        // render it
+        ws2812x.render();
+    }
+
+
+    async flashRedline() {
+        // clear the frame
+        ws2812x.reset();
+        // fill all the leds up with blue
+        for (let pix = 0; pix < this.ledCount; pix++) {
+            this.ledStrip[pix] = BLUE;
+        }
+
+        // flash
+        this.channel.brightness = 255;
+        //on
+        ws2812x.render();
+        await this.#delay(100);
+        this.channel.brightness = 0;
+        //off
+        ws2812x.render();
+        await this.#delay(100)
+        this.channel.brightness = 255;
+        //on
         ws2812x.render();
     }
 
@@ -159,4 +216,21 @@ class LedController {
     }
 }
 
+// lil debounce function
+/**
+ * Debounce will execute a given function after the specified debounce time. 
+ * This is used for idle detection of CAN Bus
+ * @param {(any => any)} func 
+ * @param {null | number} timeout 
+ * @returns 
+ */
+function debounce(func, timeout = 400) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
+
 module.exports.LedController = LedController;
+module.exports.debounce = debounce;

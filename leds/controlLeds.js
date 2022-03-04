@@ -11,7 +11,7 @@
  */
 
 const can = require('socketcan');
-const { LedController } = require('./LedController');
+const { LedController, debounce } = require('./LedController');
 const channel = can.createRawChannel('vcan0', true);
 const RPM_MASK = BigInt('0xFFFF000000000000');
 
@@ -19,22 +19,6 @@ const RPM_MASK = BigInt('0xFFFF000000000000');
 const ledController = new LedController(12, 21);
 // run test
 ledController.test();
-
-
-/**
- * Debounce will execute a given function after the specified debounce time. 
- * This is used for idle detection of CAN Bus
- * @param {(any => any)} func 
- * @param {null | number} timeout 
- * @returns 
- */
-function debounce(func, timeout = 400){
-	let timer;
-	return (...args) => {
-		clearTimeout(timer);
-		timer = setTimeout(() => {func.apply(this, args);}, timeout);
-	};
-}
 
 
 /**
